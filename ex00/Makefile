@@ -6,11 +6,11 @@
 #    By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 16:23:56 by mstrauss          #+#    #+#              #
-#    Updated: 2025/04/13 14:01:16 by mstrauss         ###   ########.fr        #
+#    Updated: 2025/04/13 14:07:30 by mstrauss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = bitcoinexchange
+NAME = btc
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++17
 SRCS = main.cpp
