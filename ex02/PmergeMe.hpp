@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:02:00 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/14 18:40:13 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/14 19:52:24 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 
 class PMergeMe {
 public:
-  PMergeMe();
+  PMergeMe() = default;
   PMergeMe(const PMergeMe &other);
   PMergeMe &operator=(const PMergeMe &other);
   ~PMergeMe();
 
 private:
-  static int comparisons = 0;
+  static int comparisons;
 };
 
 #endif PMERGEME_HPP
