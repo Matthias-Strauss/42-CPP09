@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:00:54 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/14 15:26:33 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:50:20 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,29 +16,44 @@
 #include <iostream>
 #include <vector>
 
-int main(int ac, char **av) {
+double getUnixTime(void) {
+  struct timespec tv;
 
-  std::vector<int> vector;
-  std::array<int, 10> array; // Allocate later with dynamic size
+  if (clock_gettime(CLOCK_REALTIME, &tv) != 0)
+    return 0;
+
+  return (tv.tv_sec + (tv.tv_nsec / 1000000000.0));
+}
+
+int main(int ac, char **av) {
 
   if (ac == 1) {
     std::cout << "Usage: ./PmergeMe [range of integers]" << std::endl;
     return 1;
   }
 
+  double start_time = getUnixTime();
+  double stop_time;
+  double time_diff;
+
+  std::vector<int> vector;
+  std::array<int, 10> array; // Allocate later with dynamic size
+
   try {
-    save old_time1;
+    start_time = getUnixTime();
     fordJohnsonAlgo(vector);
-    save new_time1;
-    time1 = new_time1 - old_time1;
+    stop_time = getUnixTime();
+    time_diff = start_time - stop_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << Container << " : " << time1 << "ms" << std::endl;
-    save old_time2;
+              << Container << " : " << time_diff << "ms" << std::endl;
+
+    start_time = getUnixTime();
     fordJohnsonAlgo(vector);
-    save new_time2;
-    time1 = new_time2 - old_time2;
+    stop_time = getUnixTime();
+    time_diff = start_time - stop_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << Container << " : " << time2 << "ms" << std::endl;
+              << Container << " : " << time_diff << "ms" << std::endl;
+
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
   }
