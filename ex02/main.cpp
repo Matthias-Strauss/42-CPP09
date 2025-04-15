@@ -75,14 +75,14 @@ int main(int ac, char **av) {
     stop_time = getUnixTime();
     time_diff = start_time - stop_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << ContainerName << " : " << time_diff << "ms" << std::endl;
+              << "std::vector" << " : " << time_diff << "ms" << std::endl;
 
     start_time = getUnixTime();
     fordJohnsonAlgo(deque);
     stop_time = getUnixTime();
     time_diff = start_time - stop_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << ContainerName << " : " << time_diff << "ms" << std::endl;
+              << "std::deque" << " : " << time_diff << "ms" << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';

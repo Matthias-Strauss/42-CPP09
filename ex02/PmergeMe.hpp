@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:02:00 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/14 19:52:24 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/15 16:48:40 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,21 @@
 #include <deque>
 #include <vector>
 
-class PMergeMe {
+class PmergeMe {
 public:
-  PMergeMe() = default;
-  PMergeMe(const PMergeMe &other);
-  PMergeMe &operator=(const PMergeMe &other);
-  ~PMergeMe();
+  PmergeMe() = default;
+  PmergeMe(const PmergeMe &other) = default;
+  PmergeMe &operator=(const PmergeMe &other) = default;
+  ~PmergeMe() = default;
+
+  static unsigned int compCount;
 
 private:
-  static int comparisons;
+  template <typename T> void PmergeMe::fordJohnson(T &container, int pairSize);
 };
+
+unsigned int calcJacobsthalNum(unsigned int n);
+
+#include "PmergeMe.tpp"
 
 #endif PMERGEME_HPP
