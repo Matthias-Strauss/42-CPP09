@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 19:35:40 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:29:17 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ public:
     void sort(std::vector<int> &vec);
 
 private:
-    static unsigned int _compCount;
+    inline static unsigned int _compCount = 0; // Definition added
 
-    void fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+    void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+    bool _compPair(const std::vector<int>::iterator a, const std::vector<int>::iterator b);
+    void _swapPair(const std::vector<int>::iterator a, const std::vector<int>::iterator b);
+    void _nextElem();
 };
 
-#include "PmergeMeVec.tpp"
 #endif
