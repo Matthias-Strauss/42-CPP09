@@ -6,26 +6,31 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 13:41:25 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 12:57:36 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:34:28 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
+template <typename Container>
 PmergeMe::compPair();
 
+template <typename Container>
 PmergeMe::swapPair();
 
+template <typename Container>
 PmergeMe::nextElem();
 
-template <typename T>
-void PmergeMe::fordJohnson(T &container, int pairSize)
+template <typename Container>
+void PmergeMe<Container>::fordJohnsonSort(Container &container)
 {
   T newT[];
+
   // Calc amount of pairs (numbers / 2)
-  pairs = T.size() / 2;
+  unsigned int pairs = container.size() / 2;
   if (pairs > 1)
   {
+    ;
   }
   leftover = T.size() % 2;
 

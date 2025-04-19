@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:02:00 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/15 16:48:40 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:27:39 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,21 @@
 #include <deque>
 #include <vector>
 
-class PmergeMe {
+template <typename Container>
+class PmergeMe
+{
 public:
   PmergeMe() = default;
   PmergeMe(const PmergeMe &other) = default;
   PmergeMe &operator=(const PmergeMe &other) = default;
   ~PmergeMe() = default;
 
-  static unsigned int compCount;
+  void sort(Container &container);
 
 private:
-  template <typename T> void PmergeMe::fordJohnson(T &container, int pairSize);
+  static unsigned int _compCount;
+  template <typename T>
+  void PmergeMe<Container>::fordJohnson(Container &container);
 };
 
 unsigned int calcJacobsthalNum(unsigned int n);

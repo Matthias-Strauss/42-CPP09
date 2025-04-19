@@ -88,10 +88,8 @@ int main(int ac, char **av)
     return 1;
 
   std::cout << "ORIGINAL: [ ";
-  for (size_t i = 0; i < vector.size(); i++)
-  {
-    std::cout << vector[i] << " ";
-  }
+  for (int &num : vector)
+    std::cout << num << " ";
   std::cout << "]" << std::endl;
 
   // try
