@@ -40,20 +40,20 @@ int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
 
       if (*endptr != '\0')
         throw std::invalid_argument(
-            "Error: Invalid input - Non-numeric character.");
+            "\033[31mError: Invalid input - Non-numeric character.\033[0m");
       if (num < 0)
-        throw std::invalid_argument("Error: Invalid input - Negative number.");
+        throw std::invalid_argument("\033[31mError: Invalid input - Negative number.\033[0m");
       if (num > std::numeric_limits<int>::max())
       {
-        throw std::invalid_argument("Error: Invalid input - Number out of int "
-                                    "range.");
+        throw std::invalid_argument("\033[31mError: Invalid input - Number out of int "
+                                    "range.\033[0m");
       }
       int intNum = static_cast<int>(num);
       for (int duplicateCheckNum : duplicateCheck)
       {
         if (duplicateCheckNum == intNum)
         {
-          throw std::invalid_argument("Error: Duplicate number found.");
+          throw std::invalid_argument("\033[31mError: Duplicate number found.\033[0m");
         }
       }
       duplicateCheck.push_back(intNum);
