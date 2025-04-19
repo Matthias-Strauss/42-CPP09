@@ -10,14 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PmergeMe.hpp"
+// #include "PmergeMe.hpp"
 
 #include <ctime>
 #include <deque>
 #include <iostream>
 #include <vector>
 
-double getUnixTime(void) {
+double getUnixTime(void)
+{
   struct timespec tv;
 
   if (clock_gettime(CLOCK_REALTIME, &tv) != 0)
@@ -26,11 +27,14 @@ double getUnixTime(void) {
   return (tv.tv_sec + (tv.tv_nsec / 1000000000.0));
 }
 
-int parseNumbers(int ac, char **av, std::vector<int> *vec,
-                 std::deque<int> *deq) {
+int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
+{
+  std::vector<int> duplicateCheck;
 
-  try {
-    for (int i = 1; i < ac; ++i) {
+  try
+  {
+    for (int i = 1; i < ac; ++i)
+    {
       char *endptr;
       long num = std::strtol(av[i], &endptr, 10);
 
@@ -39,23 +43,37 @@ int parseNumbers(int ac, char **av, std::vector<int> *vec,
             "Error: Invalid input - Non-numeric character.");
       if (num < 0)
         throw std::invalid_argument("Error: Invalid input - Negative number.");
-      if (num > std::numeric_limits<int>::max()) {
+      if (num > std::numeric_limits<int>::max())
+      {
         throw std::invalid_argument("Error: Invalid input - Number out of int "
                                     "range.");
       }
-      vec->push_back(static_cast<int>(num));
-      deq->push_back(static_cast<int>(num));
+      int intNum = static_cast<int>(num);
+      for (int duplicateCheckNum : duplicateCheck)
+      {
+        if (duplicateCheckNum == intNum)
+        {
+          throw std::invalid_argument("Error: Duplicate number found.");
+        }
+      }
+      duplicateCheck.push_back(intNum);
+      vec->push_back(intNum);
+      deq->push_back(intNum);
     }
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e)
+  {
     std::cerr << e.what() << '\n';
     return 1;
   }
   return 0;
 }
 
-int main(int ac, char **av) {
+int main(int ac, char **av)
+{
 
-  if (ac == 1) {
+  if (ac == 1)
+  {
     std::cout << "Usage: ./PmergeMe [range of integers]" << std::endl;
     return 1;
   }
@@ -69,23 +87,32 @@ int main(int ac, char **av) {
   if (parseNumbers(ac, av, &vector, &deque))
     return 1;
 
-  try {
-    start_time = getUnixTime();
-    fordJohnsonAlgo(vector);
-    stop_time = getUnixTime();
-    time_diff = start_time - stop_time;
-    std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << "std::vector" << " : " << time_diff << "ms" << std::endl;
-
-    start_time = getUnixTime();
-    fordJohnsonAlgo(deque);
-    stop_time = getUnixTime();
-    time_diff = start_time - stop_time;
-    std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << "std::deque" << " : " << time_diff << "ms" << std::endl;
-
-  } catch (const std::exception &e) {
-    std::cerr << e.what() << '\n';
+  std::cout << "ORIGINAL: [ ";
+  for (size_t i = 0; i < vector.size(); i++)
+  {
+    std::cout << vector[i] << " ";
   }
+  std::cout << "]" << std::endl;
+
+  // try
+  // {
+  //   start_time = getUnixTime();
+  //   fordJohnsonAlgo(vector);
+  //   stop_time = getUnixTime();
+  //   time_diff = start_time - stop_time;
+  //   std::cout << "Time to process a range of " << ac - 1 << " elements with "
+  //             << "std::vector" << " : " << time_diff << "ms" << std::endl;
+
+  //   start_time = getUnixTime();
+  //   fordJohnsonAlgo(deque);
+  //   stop_time = getUnixTime();
+  //   time_diff = start_time - stop_time;
+  //   std::cout << "Time to process a range of " << ac - 1 << " elements with "
+  //             << "std::deque" << " : " << time_diff << "ms" << std::endl;
+  // }
+  // catch (const std::exception &e)
+  // {
+  //   std::cerr << e.what() << '\n';
+  // }
   return 0;
 }
