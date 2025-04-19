@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 21:29:17 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:32:35 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ public:
     void sort(std::vector<int> &vec);
 
 private:
-    inline static unsigned int _compCount = 0; // Definition added
+    inline static unsigned int _compCount = 0;
 
     void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
     bool _compPair(const std::vector<int>::iterator a, const std::vector<int>::iterator b);
-    void _swapPair(const std::vector<int>::iterator a, const std::vector<int>::iterator b);
+    void _swapPair(std::vector<int>::iterator a, std::vector<int>::iterator b);
     void _nextElem();
 };
 
