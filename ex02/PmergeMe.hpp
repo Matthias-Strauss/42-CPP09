@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:02:00 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 15:27:39 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:32:20 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <deque>
 #include <vector>
+#include <iterator>
 
 template <typename Container>
 class PmergeMe
@@ -29,12 +30,20 @@ public:
 
 private:
   static unsigned int _compCount;
-  template <typename T>
-  void PmergeMe<Container>::fordJohnson(Container &container);
+
+  struct vector_tag
+  {
+  };
+  struct deque_tag
+  {
+  };
+
+  void fordJohnson(auto begin, auto end, vector_tag);
+  void fordJohnson(auto begin, auto end, deque_tag);
 };
 
 unsigned int calcJacobsthalNum(unsigned int n);
 
 #include "PmergeMe.tpp"
 
-#endif PMERGEME_HPP
+#endif
