@@ -6,11 +6,13 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 18:40:04 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:35:40 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #ifndef PMERGEMEVEC_HPP
+#define PMERGEMEVEC_HPP
 #include <iostream>
 #include <vector>
 
