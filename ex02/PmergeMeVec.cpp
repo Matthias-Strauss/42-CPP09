@@ -6,13 +6,12 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 19:58:49 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/20 20:33:34 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMeVec.hpp"
 #include <vector>
-#include <utility>
 #include <iterator>
 
 /// @brief compairs the int values
@@ -64,7 +63,7 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     pairs.reserve(pairCount);
 
     // iterate through new vector of pairs and fill pairs with values
-    for (size_t i = 0; i < pairCount; i++)
+    for (std::size_t i = 0; i < pairCount; i++)
     {
         pairs.push_back(std::make_pair(*it, *(it + 1))); // create pair and add values
         it += 2;
@@ -74,18 +73,16 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     for (auto const &p : pairs)
     {
         if (_compPair(p.first, p.second))
-        {
             _swapPair(p.first, p.second);
-        }
     }
 
     // handle straggler:
+    int straggler;
     if (stragglerFlag) // alternatively: (it != end)
-    {
-        int straggler = *std::prev(end);
-    }
+        straggler = *std::prev(end);
 
-    for (size_t i = 0; i < (pairCount / 2); ++i)
+    // sort pairs
+    for (std::size_t i = 0; i < (pairCount / 2); ++i)
     {
         if (_compPair(pairs[i].second, pairs[i + 1].second))
             _swapPairs(pairs[i], pairs[i + 1]); // fix types
@@ -100,7 +97,7 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     if (pairCount > 0)
         S.push_back(pairs[0].first); // b1
 
-    for (size_t i = 1; i < pairCount; ++i)
+    for (std::size_t i = 1; i < pairCount; ++i)
     {
         S.push_back(pairs[i].second); // all a's            TODO: START AT 1 OR 0????
     }
@@ -108,12 +105,12 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     // Build pend P
     std::vector<int> P;
     P.reserve(pairCount);
-    for (size_t i = 1; i < pairCount; ++i)
+    for (std::size_t i = 1; i < pairCount; ++i)
     {
         P.push_back(pairs[i].first); // remaining b's
     }
 
-    std::size_t pendAmount = P.size();
+    std::std::size_t pendAmount = P.size();
 
     if (pendAmount > 0)
     {
@@ -123,20 +120,19 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
         std::size_t prevJacob = 0;
         std::size_t currJacob = 1;
         std::size_t kJacob = 2;
+        std::size_t nextJacob;
 
         while (insertCount < pendAmount)
         {
-            std::size_t nextJacob = currJacob + 2 * prevJacob;
+            nextJacob = currJacob + 2 * prevJacob;
 
             // needed for overflow protection
             if (nextJacob < currJacob)
-            {
                 nextJacob = std::numeric_limits<std::size_t>::max();
-            }
 
             std::size_t limUpper = std::min(nextJacob, pendAmount + 1);
 
-            for (size_t i = limUpper; i > currJacob; --i)
+            for (std::size_t i = limUpper; i > currJacob; --i)
             {
                 if (i < 2)
                     continue;
@@ -147,13 +143,46 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
                     auto &currElem = P[pendIndex];
                     auto &upperBoundVal = pairs[i - 1].second;
                     auto upperBoundIt = std::lower_bound(S.begin(), S.end(), upperBoundVal); // WHAT std::lower_bound(first, last, value)
-                    auto insertPosIt = std::lower_bound(S.begin(), S.end(), currElem);
+                    auto insertPosIt = std::lower_bound(S.begin(), upperBoundIt, currElem);
                     S.insert(insertPosIt, currElem);
                     ++insertCount;
                     pendAlreadyInserted[pendIndex] = true;
                 }
             }
-            break;
+            prevJacob = currJacob;
+            currJacob = nextJacob;
+            kJacob++;
+
+            if (currJacob >= pendAmount + 1 && prevJacob >= pendAmount + 1 && insertCount < pendAmount)
+            {
+                break;
+                // check for mistakes and leftover stragglers here if neccessary
+            }
+            // SAME LOOP AS ABOVE, should only trigger in case of error. FAILSAFE. Make changes to both loops if necessary
+            if (kJacob > pendAmount + 5)
+            {
+                for (std::size_t i = 0; i < pendAmount; ++i)
+                {
+                    if (!pendAlreadyInserted[i])
+                    {
+                        auto &currElem = P[i];
+                        auto &upperBoundVal = pairs[i + 1].first;
+                        auto upperBoundIt = std::lower_bound(S.begin(), S.end(), upperBoundVal);
+                        auto insertPosIt = std::lower_bound(S.begin(), upperBoundIt, currElem);
+                        S.insert(insertPosIt, currElem);
+                        ++insertCount;
+                        pendAlreadyInserted[i] = true;
+                    }
+                }
+                break;
+            }
         }
     }
+    if (stragglerFlag)
+    {
+        auto insertPosIt = std::lower_bound(S.begin(), S.end(), straggler);
+        S.insert(insertPosIt, straggler);
+    }
+    // Overwrite the original Container
+    std::move(S.begin(), S.end(), begin);
 }
