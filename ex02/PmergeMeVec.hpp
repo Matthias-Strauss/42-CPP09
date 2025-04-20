@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 17:26:24 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/20 22:59:47 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,12 @@
 #define PMERGEMEVEC_HPP
 #include <iostream>
 #include <vector>
+#include <iterator>
+#include <utility>
+#include <limits>
+#include <algorithm>
 
-unsigned int calcJacobsthalNum(unsigned int n);
+// unsigned int calcJacobsthalNum(unsigned int n);
 
 class PmergeMeVec
 {
@@ -26,16 +30,15 @@ public:
     PmergeMeVec &operator=(const PmergeMeVec &other) = default;
     ~PmergeMeVec() = default;
 
-    void sort(std::vector<int> &vec);
+    static void sort(std::vector<int> &vec);
+    static void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+    static bool _compPair(int &a, int &b);
+    static void _swapPair(int &a, int &b);
+    static void _swapPairs(std::pair<int, int> &a, std::pair<int, int> &b);
 
 private:
     inline static unsigned int _compCount = 0;
-
-    void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
-    bool _compPair(int a, int b);
-    void _swapPair(int a, int b);
-    void _swapPairs(std::pair<int, int> a, std::pair<int, int> b);
-    void _nextElem();
+    // void _nextElem();
 };
 
 #endif

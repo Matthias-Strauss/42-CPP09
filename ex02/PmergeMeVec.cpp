@@ -6,25 +6,23 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 20:33:34 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/20 23:02:39 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMeVec.hpp"
-#include <vector>
-#include <iterator>
 
 /// @brief compairs the int values
 /// @param a first int
 /// @param b second int
 /// @return true if FIRST > SECOND (->implying a swap is neccessary)
-bool PmergeMeVec::_compPair(int a, int b)
+bool PmergeMeVec::_compPair(int &a, int &b)
 {
     _compCount++;
     return (a > b);
 }
 
-void PmergeMeVec::_swapPair(int a, int b)
+void PmergeMeVec::_swapPair(int &a, int &b)
 {
     std::swap(a, b);
 
@@ -34,7 +32,7 @@ void PmergeMeVec::_swapPair(int a, int b)
     // b = tmp;
 }
 
-void PmergeMeVec::_swapPairs(std::pair<int, int> a, std::pair<int, int> b) // unify and template agnostically with swapPair later
+void PmergeMeVec::_swapPairs(std::pair<int, int> &a, std::pair<int, int> &b) // unify and template agnostically with swapPair later
 {
     std::swap(a, b);
 }
@@ -70,9 +68,9 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     }
 
     // iterate through vector of pairs, compare , and swap if necessary
-    for (auto const &p : pairs)
+    for (auto &p : pairs)
     {
-        if (_compPair(p.first, p.second))
+        if (PmergeMeVec::_compPair(p.first, p.second))
             _swapPair(p.first, p.second);
     }
 
@@ -110,7 +108,7 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
         P.push_back(pairs[i].first); // remaining b's
     }
 
-    std::std::size_t pendAmount = P.size();
+    std::size_t pendAmount = P.size();
 
     if (pendAmount > 0)
     {

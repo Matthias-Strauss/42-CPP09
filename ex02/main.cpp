@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "PmergeMe.hpp"
+#include "PmergeMeVec.hpp"
 
 #include <ctime>
 #include <deque>
@@ -71,46 +71,45 @@ int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
 
 int main(int ac, char **av)
 {
-
   if (ac == 1)
   {
     std::cout << "Usage: ./PmergeMe [range of integers]" << std::endl;
     return 1;
   }
 
-  double start_time = getUnixTime();
+  double start_time;
   double stop_time;
   double time_diff;
 
-  std::vector<int> vector;
+  std::vector<int> vec;
   std::deque<int> deque;
-  if (parseNumbers(ac, av, &vector, &deque))
+  if (parseNumbers(ac, av, &vec, &deque))
     return 1;
 
   std::cout << "ORIGINAL: [ ";
-  for (int &num : vector)
+  for (int &num : vec)
     std::cout << num << " ";
   std::cout << "]" << std::endl;
 
-  // try
-  // {
-  //   start_time = getUnixTime();
-  //   fordJohnsonAlgo(vector);
-  //   stop_time = getUnixTime();
-  //   time_diff = start_time - stop_time;
-  //   std::cout << "Time to process a range of " << ac - 1 << " elements with "
-  //             << "std::vector" << " : " << time_diff << "ms" << std::endl;
+  try
+  {
+    start_time = getUnixTime();
+    PmergeMeVec::sort(vec);
+    stop_time = getUnixTime();
+    time_diff = start_time - stop_time;
+    std::cout << "Time to process a range of " << ac - 1 << " elements with "
+              << "std::vector" << " : " << time_diff << "ms" << std::endl;
 
-  //   start_time = getUnixTime();
-  //   fordJohnsonAlgo(deque);
-  //   stop_time = getUnixTime();
-  //   time_diff = start_time - stop_time;
-  //   std::cout << "Time to process a range of " << ac - 1 << " elements with "
-  //             << "std::deque" << " : " << time_diff << "ms" << std::endl;
-  // }
-  // catch (const std::exception &e)
-  // {
-  //   std::cerr << e.what() << '\n';
-  // }
+    // start_time = getUnixTime();
+    // fordJohnsonAlgo(deque);
+    // stop_time = getUnixTime();
+    // time_diff = start_time - stop_time;
+    // std::cout << "Time to process a range of " << ac - 1 << " elements with "
+    //           << "std::deque" << " : " << time_diff << "ms" << std::endl;
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << e.what() << '\n';
+  }
   return 0;
 }
