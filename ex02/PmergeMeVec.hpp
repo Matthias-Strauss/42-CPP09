@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/19 21:32:35 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/20 17:26:24 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@ private:
     inline static unsigned int _compCount = 0;
 
     void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
-    bool _compPair(const std::vector<int>::iterator a, const std::vector<int>::iterator b);
-    void _swapPair(std::vector<int>::iterator a, std::vector<int>::iterator b);
+    bool _compPair(int a, int b);
+    void _swapPair(int a, int b);
+    void _swapPairs(std::pair<int, int> a, std::pair<int, int> b);
     void _nextElem();
 };
 
