@@ -87,8 +87,8 @@ int main(int ac, char **av)
     return 1;
 
   std::cout << "ORIGINAL: [ ";
-  for (int &num : vec)
-    std::cout << num << " ";
+  for (auto &elem : vec)
+    std::cout << elem << " ";
   std::cout << "]" << std::endl;
 
   try
@@ -99,7 +99,10 @@ int main(int ac, char **av)
     time_diff = start_time - stop_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
               << "std::vector" << " : " << time_diff << "ms" << std::endl;
-
+    std::cout << "MAYBE SORTED: [ ";
+    for (auto &elem : vec)
+      std::cout << elem << " ";
+    std::cout << "]" << std::endl;
     // start_time = getUnixTime();
     // fordJohnsonAlgo(deque);
     // stop_time = getUnixTime();
