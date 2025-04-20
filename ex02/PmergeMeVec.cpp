@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 17:37:28 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/20 19:58:49 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,5 +111,49 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     for (size_t i = 1; i < pairCount; ++i)
     {
         P.push_back(pairs[i].first); // remaining b's
+    }
+
+    std::size_t pendAmount = P.size();
+
+    if (pendAmount > 0)
+    {
+        std::vector<bool> pendAlreadyInserted(pendAmount, false); // check values to keep track of already inserted elements
+        std::size_t insertCount = 0;
+
+        std::size_t prevJacob = 0;
+        std::size_t currJacob = 1;
+        std::size_t kJacob = 2;
+
+        while (insertCount < pendAmount)
+        {
+            std::size_t nextJacob = currJacob + 2 * prevJacob;
+
+            // needed for overflow protection
+            if (nextJacob < currJacob)
+            {
+                nextJacob = std::numeric_limits<std::size_t>::max();
+            }
+
+            std::size_t limUpper = std::min(nextJacob, pendAmount + 1);
+
+            for (size_t i = limUpper; i > currJacob; --i)
+            {
+                if (i < 2)
+                    continue;
+                std::size_t pendIndex = i - 2;
+
+                if (pendIndex < pendAmount && !pendAlreadyInserted[pendIndex])
+                {
+                    auto &currElem = P[pendIndex];
+                    auto &upperBoundVal = pairs[i - 1].second;
+                    auto upperBoundIt = std::lower_bound(S.begin(), S.end(), upperBoundVal); // WHAT std::lower_bound(first, last, value)
+                    auto insertPosIt = std::lower_bound(S.begin(), S.end(), currElem);
+                    S.insert(insertPosIt, currElem);
+                    ++insertCount;
+                    pendAlreadyInserted[pendIndex] = true;
+                }
+            }
+            break;
+        }
     }
 }
