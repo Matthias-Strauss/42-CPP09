@@ -104,7 +104,7 @@ int main(int ac, char **av)
   if (parseNumbers(ac, av, vec, deque))
     return 1;
 
-  std::cout << "ORIGINAL: [ ";
+  std::cout << "ORIGINAL: \n[ ";
   for (auto &elem : vec)
     std::cout << elem << " ";
   std::cout << "]" << std::endl;

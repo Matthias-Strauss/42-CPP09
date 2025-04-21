@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 10:30:03 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 11:12:11 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ struct is_supported_container : std::disjunction<std::is_same<T, std::vector<int
 template <typename T>
 inline constexpr bool is_supported_container_value = is_supported_container<T>::value;
 
-template <typename Container, typename T = typename Container::value_type>
+
+
+template <typename Container, typename T = typename Container::value_type, typename It = typename Container::iterator>
 class PmergeMeVec
 {
     static_assert(is_supported_container_value<Container>,
@@ -44,17 +46,14 @@ public:
     ~PmergeMeVec() = default;
 
     void sort(Container &src);
+    void printContainer(Container &src);
 
 private:
     Container _container;
     inline static unsigned int _compCount = 0;
-
-
-    void _fordJohnson(typename Container::iterator begin, typename Container::iterator end, int recLevel = 0);
-
-    static bool _compare(T &a, T &b);
-
-    void _swap(T &a, T &b);
+    void _fordJohnson(Container src, int groupSize = 1);
+    bool _compare(T &a, T &b);
+    void _swap(It &a, It &b, int groupSize);
 };
 
 #include "PmergeMeVec.tpp"
