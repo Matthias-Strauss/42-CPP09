@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 19:31:17 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 20:25:11 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,33 +150,30 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
     if (pendGroupCount > 0)
     {
         std::vector<bool> inserted(pendGroupCount + 1, false);
+        inserted[0] = true; // 0 is not used, but we need to keep track of the indices
         int insertCount = 1;
 
         long long prevJ = 1;
-        long long currJ = 1;
+        long long currJ = 3;
 
         while (insertCount <= pendGroupCount)
         {
             long long nextJ;
             if (prevJ > (std::numeric_limits<long long>::max() - currJ) / 2)
-            {
                 nextJ = std::numeric_limits<long long>::max();
-            }
             else
-            {
                 nextJ = currJ + 2 * prevJ;
-            }
 
-            int limit = std::min((long long)pendGroupCount, currJ);
+            int limit = std::min((long long)pendGroupCount, currJ - 1);
 
             if (DEBUG)
             {
                 std::cout << "Jacobsthal step: prevJ=" << prevJ << ", currJ=" << currJ << " (limit=" << limit << "). Inserting indices (k): ";
             }
 
-            for (int k = limit; k > static_cast<int>(prevJ); --k)
+            for (int k = limit; k > static_cast<int>(prevJ - 1); --k)
             {
-                if (k > 0 && k <= pendGroupCount && !inserted[k])
+                if (k >= 0 && k <= pendGroupCount && !inserted[k])
                 {
                     if (DEBUG)
                         std::cout << k << " ";
@@ -195,7 +192,7 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
                     It search_range_end = Main.begin();
                     std::advance(search_range_end, std::min(search_limit_idx * groupSize + groupSize, current_main_size));
 
-                    std::vector<It>temp_its;
+                    std::vector<It> temp_its;
                     for (size_t i = groupSize - 1; i < current_main_size; i += groupSize)
                     {
                         It it = Main.begin();
