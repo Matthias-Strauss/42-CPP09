@@ -17,24 +17,6 @@
 #include <iostream>
 #include <vector>
 
-void printVec(std::vector<int> &vec)
-{
-  std::cout << "[ ";
-
-  for (auto elem : vec)
-    std::cout << elem << " ";
-  std::cout << "]" << std::endl;
-}
-
-void printDeque(std::deque<int> &deq)
-{
-  std::cout << "[ ";
-
-  for (auto elem : deq)
-    std::cout << elem << " ";
-  std::cout << "]" << std::endl;
-}
-
 double getUnixTime(void)
 {
   struct timespec tv;
@@ -118,16 +100,18 @@ int main(int ac, char **av)
     time_diff = stop_time - start_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
               << "std::vector" << " : " << time_diff << "ms" << std::endl;
-    std::cout << "MAYBE SORTED: [ ";
-    for (auto &elem : vec)
-      std::cout << elem << " ";
-    std::cout << "]" << std::endl;
-    // start_time = getUnixTime();
-    // fordJohnsonAlgo(deque);
-    // stop_time = getUnixTime();
-    // time_diff = start_time - stop_time;
-    // std::cout << "Time to process a range of " << ac - 1 << " elements with "
-    //           << "std::deque" << " : " << time_diff << "ms" << std::endl;
+    std::cout << "SORTED  : \n";
+    misVec.printContainer(vec);
+
+        start_time = getUnixTime();
+    PmergeMeVec misDeq(deque);
+    misDeq.sort(deque);
+    stop_time = getUnixTime();
+    time_diff = start_time - stop_time;
+    std::cout << "Time to process a range of " << ac - 1 << " elements with "
+              << "std::deque" << " : " << time_diff << "ms" << std::endl;
+    std::cout << "SORTED  : \n";
+    misDeq.printContainer(deque);
   }
   catch (const std::exception &e)
   {

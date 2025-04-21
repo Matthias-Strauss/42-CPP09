@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 11:12:11 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 12:04:53 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
     ~PmergeMeVec() = default;
 
     void sort(Container &src);
-    void printContainer(Container &src);
+    static void printContainer(Container &src);
 
 private:
     Container _container;
