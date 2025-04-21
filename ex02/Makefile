@@ -6,13 +6,13 @@
 #    By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 16:23:56 by mstrauss          #+#    #+#              #
-#    Updated: 2025/04/20 23:05:07 by mstrauss         ###   ########.fr        #
+#    Updated: 2025/04/20 23:31:48 by mstrauss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = PmergeMe
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++17
+CXXFLAGS = -Wall -Wextra -Werror -std=c++17 -g
 SRCS = main.cpp PmergeMeVec.cpp
 INC = PmergeMeVec.hpp
 OBJS = $(SRCS:.cpp=.o)

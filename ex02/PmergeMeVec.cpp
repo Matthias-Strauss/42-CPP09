@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 23:02:39 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 00:04:40 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     // sort pairs
     for (std::size_t i = 0; i < (pairCount / 2); ++i)
     {
-        if (_compPair(pairs[i].second, pairs[i + 1].second))
-            _swapPairs(pairs[i], pairs[i + 1]); // fix types
+        if (_compPair(pairs[i].second, pairs[i + 1].second)) // CONTINUE HERE -> LOOP STOPS WAY TOO EARLY
+            _swapPairs(pairs[i], pairs[i + 1]);              // fix types
         i += 2;
     }
 

@@ -24,7 +24,7 @@ double getUnixTime(void)
   if (clock_gettime(CLOCK_REALTIME, &tv) != 0)
     return 0;
 
-  return (tv.tv_sec + (tv.tv_nsec / 1000000000.0));
+  return (tv.tv_sec + (tv.tv_nsec / 1000000.0)); // FIX AND USE SUITABLE UNITS!!!!
 }
 
 int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
@@ -96,7 +96,7 @@ int main(int ac, char **av)
     start_time = getUnixTime();
     PmergeMeVec::sort(vec);
     stop_time = getUnixTime();
-    time_diff = start_time - stop_time;
+    time_diff = stop_time - start_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
               << "std::vector" << " : " << time_diff << "ms" << std::endl;
     std::cout << "MAYBE SORTED: [ ";
