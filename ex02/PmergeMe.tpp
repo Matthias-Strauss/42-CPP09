@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PmergeMeVec.tpp                                    :+:      :+:    :+:   */
+/*   PmergeMe.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 21:26:07 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:57:47 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PmergeMeVec.hpp"
+#include "PmergeMe.hpp"
 
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::_fill(Container &Main, It &it, int groupSize)
@@ -55,15 +55,6 @@ void PmergeMeVec<Container, T, It>::_swap(It &a, It &b, int groupSize)
 
     std::swap_ranges(first1, last1, first2);
 }
-
-// template <typename Container, typename T, typename It>
-// void PmergeMeVec<Container, T, It>::sort(Container &src)
-// {
-//     if (src.size() < 2)
-//         return;
-//     _compCount = 0;
-//     _fordJohnson(src);
-// }
 
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::fordJohnson(Container &src, int groupSize)

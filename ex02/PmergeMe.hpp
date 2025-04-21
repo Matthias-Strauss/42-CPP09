@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PmergeMeVec.hpp                                    :+:      :+:    :+:   */
+/*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 21:46:54 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:55:28 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef PMERGEMEVEC_HPP
-#define PMERGEMEVEC_HPP
+#ifndef PMERGEME_HPP
+#define PMERGEME_HPP
 #include <iostream>
 #include <type_traits>
 #include <vector>
@@ -59,5 +59,5 @@ private:
     void _fill(Container &S, It &it, int groupSize);
 };
 
-#include "PmergeMeVec.tpp"
+#include "PmergeMe.tpp"
 #endif

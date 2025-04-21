@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PmergeMeVec.hpp"
+#include "PmergeMe.hpp"
 
 int parseNumbers(int ac, char **av, std::vector<int> &vec, std::deque<int> &deq)
 {
