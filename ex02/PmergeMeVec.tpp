@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 18:00:26 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 19:31:17 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
     printContainer(src);
     _fordJohnson(src, groupSize * 2); // RECURSION :O
 
-    // ######################## INSSEEEERT ##################################
+    // ##################### BUILD MAIN AND PEND ##############################
 
     // BUILDING MAIN CHAIN (Main)
     Container Main{};
@@ -143,17 +143,19 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
         std::cout << std::endl;
     }
 
+    // ##################### INSERTIIIIIIING ##############################
     int pendGroupCount = Pend.size() / groupSize;
 
+    //
     if (pendGroupCount > 0)
     {
         std::vector<bool> inserted(pendGroupCount + 1, false);
-        int insertCount = 0;
+        int insertCount = 1;
 
-        long long prevJ = 0;
+        long long prevJ = 1;
         long long currJ = 1;
 
-        while (insertCount < pendGroupCount)
+        while (insertCount <= pendGroupCount)
         {
             long long nextJ;
             if (prevJ > (std::numeric_limits<long long>::max() - currJ) / 2)
@@ -193,14 +195,29 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
                     It search_range_end = Main.begin();
                     std::advance(search_range_end, std::min(search_limit_idx * groupSize + groupSize, current_main_size));
 
-                    auto it_first_ge = std::lower_bound(Main.begin(), search_range_end, value_to_insert);
+                    std::vector<It>temp_its;
+                    for (size_t i = groupSize - 1; i < current_main_size; i += groupSize)
+                    {
+                        It it = Main.begin();
+                        std::advance(it, i);
+                        temp_its.push_back(it);
+                    }
+                    typename std::vector<It>::iterator its_range_end = temp_its.begin();
+                    std::advance(its_range_end, search_limit_idx);
 
-                    size_t distance = std::distance(Main.begin(), it_first_ge);
+                    auto it_first_ge = std::upper_bound(temp_its.begin(), its_range_end, value_to_insert, [](const T &val, const It &it)
+                                                        { return val < *it; });
+                    It insertPosIt = *it_first_ge;
+                    size_t distance = std::distance(Main.begin(), insertPosIt);
                     size_t insert_idx = (distance / groupSize) * groupSize;
 
                     It insertPosGroupIt = Main.begin();
                     std::advance(insertPosGroupIt, insert_idx);
-
+                    if (DEBUG)
+                    {
+                        std::cout << "Inserting b" << k << " (value=" << value_to_insert << ", size=" << groupSize << ") at index " << insert_idx << std::endl;
+                        printContainer(current_b_group_vec);
+                    }
                     Main.insert(insertPosGroupIt, current_b_group_vec.begin(), current_b_group_vec.end());
 
                     inserted[k] = true;
@@ -225,76 +242,78 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
         {
             if (DEBUG)
                 std::cout << "Warning: Jacobsthal loop finished with " << pendGroupCount - insertCount << " elements remaining. Inserting failsafe." << std::endl;
-            for (int k = 1; k <= pendGroupCount; ++k)
-            {
-                if (!inserted[k])
-                {
-                    int pendIndex = k - 1;
-                    It b_k_start = Pend.begin();
-                    std::advance(b_k_start, pendIndex * groupSize);
-                    It b_k_end = std::next(b_k_start, groupSize);
-                    std::vector<T> current_b_group_vec(b_k_start, b_k_end);
-                    T &value_to_insert = current_b_group_vec.back();
-
-                    auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), value_to_insert);
-                    size_t distance = std::distance(Main.begin(), it_first_ge);
-                    size_t insert_idx = (distance / groupSize) * groupSize;
-                    It insertPosGroupIt = Main.begin();
-                    std::advance(insertPosGroupIt, insert_idx);
-                    Main.insert(insertPosGroupIt, current_b_group_vec.begin(), current_b_group_vec.end());
-
-                    insertCount++;
-                    if (DEBUG)
-                    {
-                        std::cout << "Failsafe inserted b" << k << std::endl;
-                    }
-                }
-            }
         }
     }
 
-    if (stragglerFlag && groupSize == 1) /// MADE CHANGES Here< MAYBE DELEte LATER
-    {
-        size_t stragglerActualSize = std::distance(straggler, src.end());
-
-        if (stragglerActualSize > 0)
-        {
-            It straggler_end_it = straggler;
-            std::advance(straggler_end_it, stragglerActualSize);
-            std::vector<T> straggler_group_vec(straggler, straggler_end_it);
-
-            T &straggler_val = straggler_group_vec.back();
-
-            auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), straggler_val);
-
-            size_t distance = std::distance(Main.begin(), it_first_ge);
-
-            size_t insert_idx = (distance / groupSize) * groupSize;
-            It insertPosGroupIt = Main.begin();
-            std::advance(insertPosGroupIt, insert_idx);
-
-            Main.insert(insertPosGroupIt, straggler_group_vec.begin(), straggler_group_vec.end());
-
-            if (DEBUG)
-            {
-                std::cout << "Inserted Straggler (defining value=" << straggler_val << ", size=" << stragglerActualSize << "). Final Main: ";
-                printContainer(Main);
-            }
-        }
-        else if (DEBUG)
-        {
-            std::cout << "Straggler detected but size is 0." << std::endl;
-        }
-    }
-    else if (DEBUG)
-    {
-        std::cout << "No straggler inserted during this step." << std::endl;
-    }
     if (stragglerFlag)
         while (straggler < src.end())
             Main.push_back(*straggler++);
     src.assign(Main.begin(), Main.end());
 }
+
+// for (int k = 1; k <= pendGroupCount; ++k)
+// {
+//     if (!inserted[k])
+//     {
+//         int pendIndex = k - 1;
+//         It b_k_start = Pend.begin();
+//         std::advance(b_k_start, pendIndex * groupSize);
+//         It b_k_end = std::next(b_k_start, groupSize);
+//         std::vector<T> current_b_group_vec(b_k_start, b_k_end);
+//         T &value_to_insert = current_b_group_vec.back();
+
+//         auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), value_to_insert);
+//         size_t distance = std::distance(Main.begin(), it_first_ge);
+//         size_t insert_idx = (distance / groupSize) * groupSize;
+//         It insertPosGroupIt = Main.begin();
+//         std::advance(insertPosGroupIt, insert_idx);
+//         Main.insert(insertPosGroupIt, current_b_group_vec.begin(), current_b_group_vec.end());
+
+//         insertCount++;
+//         if (DEBUG)
+//         {
+//             std::cout << "Failsafe inserted b" << k << std::endl;
+//         }
+//     }
+// }
+
+// if (stragglerFlag && groupSize == 1) /// MADE CHANGES Here< MAYBE DELEte LATER
+// {
+//     size_t stragglerActualSize = std::distance(straggler, src.end());
+
+//     if (stragglerActualSize > 0)
+//     {
+//         It straggler_end_it = straggler;
+//         std::advance(straggler_end_it, stragglerActualSize);
+//         std::vector<T> straggler_group_vec(straggler, straggler_end_it);
+
+//         T &straggler_val = straggler_group_vec.back();
+
+//         auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), straggler_val);
+
+//         size_t distance = std::distance(Main.begin(), it_first_ge);
+
+//         size_t insert_idx = (distance / groupSize) * groupSize;
+//         It insertPosGroupIt = Main.begin();
+//         std::advance(insertPosGroupIt, insert_idx);
+
+//         Main.insert(insertPosGroupIt, straggler_group_vec.begin(), straggler_group_vec.end());
+
+//         if (DEBUG)
+//         {
+//             std::cout << "Inserted Straggler (defining value=" << straggler_val << ", size=" << stragglerActualSize << "). Final Main: ";
+//             printContainer(Main);
+//         }
+//     }
+//     else if (DEBUG)
+//     {
+//         std::cout << "Straggler detected but size is 0." << std::endl;
+//     }
+// }
+// else if (DEBUG)
+// {
+//     std::cout << "No straggler inserted during this step." << std::endl;
+// }
 
 // #################################
 // ###### GARBAGE STARTS HERE ######
