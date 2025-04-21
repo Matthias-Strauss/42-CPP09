@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/20 22:59:47 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 05:39:20 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #define PMERGEMEVEC_HPP
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <iterator>
 #include <utility>
 #include <limits>
@@ -30,15 +31,17 @@ public:
     PmergeMeVec &operator=(const PmergeMeVec &other) = default;
     ~PmergeMeVec() = default;
 
-    static void sort(std::vector<int> &vec);
+    static void sort(std::vector<int> &src);
+    static void sort(std::deque<int> &src);
     static void _fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end);
+    static bool _compPair(int &a, int &b);
     static bool _compPair(int &a, int &b);
     static void _swapPair(int &a, int &b);
     static void _swapPairs(std::pair<int, int> &a, std::pair<int, int> &b);
 
 private:
     inline static unsigned int _compCount = 0;
-    // void _nextElem();
+    static bool _compare(&Container, &Container);
 };
 
 #endif

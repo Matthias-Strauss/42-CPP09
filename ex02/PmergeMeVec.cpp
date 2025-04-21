@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 00:04:40 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 04:48:35 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void PmergeMeVec::_swapPair(int &a, int &b)
     // b = tmp;
 }
 
-void PmergeMeVec::_swapPairs(std::pair<int, int> &a, std::pair<int, int> &b) // unify and template agnostically with swapPair later
+void PmergeMeVec::_swapPairs(std::vec<int> &a, std::vec<int> &b)
 {
     std::swap(a, b);
 }
