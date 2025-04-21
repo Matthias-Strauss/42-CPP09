@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:31:18 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 12:04:53 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:07:36 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <utility>
 #include <limits>
 #include <algorithm>
+
+#define DEBUG 1
 
 template <typename T>
 struct is_supported_container : std::disjunction<std::is_same<T, std::vector<int>>, std::is_same<T, std::deque<int>>>
@@ -51,9 +53,10 @@ public:
 private:
     Container _container;
     inline static unsigned int _compCount = 0;
-    void _fordJohnson(Container src, int groupSize = 1);
-    bool _compare(T &a, T &b);
+    void _fordJohnson(Container &src, int groupSize = 1); bool _compare(T &a, T &b);
     void _swap(It &a, It &b, int groupSize);
+
+    void _fill(Container &S, It &it, int groupSize);
 };
 
 #include "PmergeMeVec.tpp"

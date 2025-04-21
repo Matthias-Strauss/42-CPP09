@@ -6,13 +6,22 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 12:36:33 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:00:26 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "PmergeMeVec.hpp"
 
+template <typename Container, typename T, typename It>
+void PmergeMeVec<Container, T, It>::_fill(Container &Main, It &it, int groupSize)
+{
+    for (int i = 0; i < groupSize; ++i)
+    {
+        Main.push_back(*it);
+        it++;
+    }
+}
 
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::printContainer(Container &src)
@@ -37,7 +46,7 @@ bool PmergeMeVec<Container, T, It>::_compare(T &a, T &b)
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::_swap(It &a, It &b, int groupSize)
 {
-    std::swap_ranges(a - groupSize + 1, a+1, b - groupSize + 1);
+    std::swap_ranges(a - groupSize + 1, a + 1, b - groupSize + 1);
 }
 
 template <typename Container, typename T, typename It>
@@ -45,64 +54,253 @@ void PmergeMeVec<Container, T, It>::sort(Container &src)
 {
     if (src.size() < 2)
         return;
-
+    _compCount = 0;
     _fordJohnson(src);
 }
 
 template <typename Container, typename T, typename It>
-void PmergeMeVec<Container, T, It>::_fordJohnson(Container src, int groupSize)
+void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
 {
     // ######################## MEERRGGEEE ##################################
     It begin = src.begin();
     It end = src.end();
-    
+
     int elemCount = std::distance(begin, end);
-    
+
     if (elemCount < 2)
-    return;
-    
+        return;
+
     int pairCount = elemCount / (2 * groupSize);
     if (pairCount == 0)
-    return;
+        return;
     // bool stragglerFlag = (elemCount % 2 != 0);
-    
+
     It it = std::next(begin, groupSize - 1);
     It it2 = std::next(begin, 2 * groupSize - 1);
-    
+
     for (int i = 0; i < pairCount; ++i)
     {
         if (_compare(*it, *it2))
-        _swap(it, it2, groupSize);
+            _swap(it, it2, groupSize);
         it = std::next(it, 2 * groupSize);
         it2 = std::next(it2, 2 * groupSize);
     }
     printContainer(src);
     _fordJohnson(src, groupSize * 2); // RECURSION :O
-    
+
     // ######################## INSSEEEERT ##################################
 
-//     // Build main chain S
-//     Container<int> S;
+    // BUILDING MAIN CHAIN (Main)
+    Container Main{};
+    Main.reserve(elemCount);
+    Container Pend{};
+    Pend.reserve(elemCount);
 
-//     // Iterate through the pairs to build the main chain S from the larger elements
-//     S.reserve(elemCount);
-//     if (pairCount > 0)
-//         S.push_back(); // b1
+    it = src.begin();
+    it2 = std::next(begin, groupSize * 2); // CHECK VALUE OF *2!!!!
+    end = src.end();
 
-//     for (int i = 1; i < pairCount; ++i)
-//     {
-//         S.push_back(pairs[i].second); // all a's            TODO: START AT 1 OR 0????
-//     }
+    std::cout << "\nsrc: " << std::endl;
+    printContainer(src);
+    // Iterate through the pairs to build the main chain Main from the larger elements
+    // Main.reserve(elemCount); should be handled by constructor
+    if (pairCount > 0)
+        _fill(Main, it, groupSize); // add a1
 
-//     // Build pend P
-//     Container<int> P;
-//     P.reserve(pairCount);
-//     for (int i = 1; i < pairCount; ++i)
-//     {
-//         P.push_back(pairs[i].first); // remaining b's
-//     }
+    while (std::distance(it, end) >= groupSize)
+    {
+        _fill(Main, it, groupSize); // add b_k's to main
+        if (std::distance(it, end) >= groupSize)
+            _fill(Pend, it, groupSize); // add a_k's to pend
+    }
 
-//     int pendAmount = P.size();
+    bool stragglerFlag = (std::distance(it, end) > 0); // PART OF GARBAGe
+    It straggler;                                      // PART OF GARBAGe
+
+    if (stragglerFlag)
+        straggler = it;
+
+    if (DEBUG)
+    {
+        std::cout << std::endl;
+        std::cout << "~~~ After building Main and Pend ~~~" << std::endl; // DEBUG
+        std::cout << "Main: ";                                            // DEBUG
+        printContainer(Main);
+        std::cout << "Pend: "; // DEBUG
+        printContainer(Pend);
+        std::cout << "Straggler: " << stragglerFlag;                // DEBUG
+        std::cout << "      groupSize: " << groupSize << std::endl; // DEBUG
+        std::cout << "      straggler: ";                           // DEBUG
+        if (stragglerFlag)
+        {
+            It stragglerCopy = straggler;
+            int nummer = 0;
+            while (nummer < std::distance(stragglerCopy, src.end())) // DEBUG
+            {
+                std::cout << *stragglerCopy++ << " "; // DEBUG
+            }
+        }
+        std::cout << std::endl;
+    }
+
+    int pendGroupCount = Pend.size() / groupSize;
+
+    if (pendGroupCount > 0)
+    {
+        std::vector<bool> inserted(pendGroupCount + 1, false);
+        int insertCount = 0;
+
+        long long prevJ = 0;
+        long long currJ = 1;
+
+        while (insertCount < pendGroupCount)
+        {
+            long long nextJ;
+            if (prevJ > (std::numeric_limits<long long>::max() - currJ) / 2)
+            {
+                nextJ = std::numeric_limits<long long>::max();
+            }
+            else
+            {
+                nextJ = currJ + 2 * prevJ;
+            }
+
+            int limit = std::min((long long)pendGroupCount, currJ);
+
+            if (DEBUG)
+            {
+                std::cout << "Jacobsthal step: prevJ=" << prevJ << ", currJ=" << currJ << " (limit=" << limit << "). Inserting indices (k): ";
+            }
+
+            for (int k = limit; k > static_cast<int>(prevJ); --k)
+            {
+                if (k > 0 && k <= pendGroupCount && !inserted[k])
+                {
+                    if (DEBUG)
+                        std::cout << k << " ";
+
+                    int pendIndex = k - 1;
+
+                    It b_k_start = Pend.begin();
+                    std::advance(b_k_start, pendIndex * groupSize);
+                    It b_k_end = std::next(b_k_start, groupSize);
+
+                    std::vector<T> current_b_group_vec(b_k_start, b_k_end);
+                    T &value_to_insert = current_b_group_vec.back();
+
+                    size_t current_main_size = Main.size();
+                    size_t search_limit_idx = std::min((size_t)k + insertCount, current_main_size / groupSize);
+                    It search_range_end = Main.begin();
+                    std::advance(search_range_end, std::min(search_limit_idx * groupSize + groupSize, current_main_size));
+
+                    auto it_first_ge = std::lower_bound(Main.begin(), search_range_end, value_to_insert);
+
+                    size_t distance = std::distance(Main.begin(), it_first_ge);
+                    size_t insert_idx = (distance / groupSize) * groupSize;
+
+                    It insertPosGroupIt = Main.begin();
+                    std::advance(insertPosGroupIt, insert_idx);
+
+                    Main.insert(insertPosGroupIt, current_b_group_vec.begin(), current_b_group_vec.end());
+
+                    inserted[k] = true;
+                    insertCount++;
+
+                    if (DEBUG)
+                    {
+                    }
+                }
+            }
+            if (DEBUG)
+                std::cout << std::endl;
+
+            prevJ = currJ;
+            currJ = nextJ;
+
+            if (currJ <= 0 || prevJ < 0)
+                break;
+        }
+
+        if (insertCount < pendGroupCount)
+        {
+            if (DEBUG)
+                std::cout << "Warning: Jacobsthal loop finished with " << pendGroupCount - insertCount << " elements remaining. Inserting failsafe." << std::endl;
+            for (int k = 1; k <= pendGroupCount; ++k)
+            {
+                if (!inserted[k])
+                {
+                    int pendIndex = k - 1;
+                    It b_k_start = Pend.begin();
+                    std::advance(b_k_start, pendIndex * groupSize);
+                    It b_k_end = std::next(b_k_start, groupSize);
+                    std::vector<T> current_b_group_vec(b_k_start, b_k_end);
+                    T &value_to_insert = current_b_group_vec.back();
+
+                    auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), value_to_insert);
+                    size_t distance = std::distance(Main.begin(), it_first_ge);
+                    size_t insert_idx = (distance / groupSize) * groupSize;
+                    It insertPosGroupIt = Main.begin();
+                    std::advance(insertPosGroupIt, insert_idx);
+                    Main.insert(insertPosGroupIt, current_b_group_vec.begin(), current_b_group_vec.end());
+
+                    insertCount++;
+                    if (DEBUG)
+                    {
+                        std::cout << "Failsafe inserted b" << k << std::endl;
+                    }
+                }
+            }
+        }
+    }
+
+    if (stragglerFlag && groupSize == 1) /// MADE CHANGES Here< MAYBE DELEte LATER
+    {
+        size_t stragglerActualSize = std::distance(straggler, src.end());
+
+        if (stragglerActualSize > 0)
+        {
+            It straggler_end_it = straggler;
+            std::advance(straggler_end_it, stragglerActualSize);
+            std::vector<T> straggler_group_vec(straggler, straggler_end_it);
+
+            T &straggler_val = straggler_group_vec.back();
+
+            auto it_first_ge = std::lower_bound(Main.begin(), Main.end(), straggler_val);
+
+            size_t distance = std::distance(Main.begin(), it_first_ge);
+
+            size_t insert_idx = (distance / groupSize) * groupSize;
+            It insertPosGroupIt = Main.begin();
+            std::advance(insertPosGroupIt, insert_idx);
+
+            Main.insert(insertPosGroupIt, straggler_group_vec.begin(), straggler_group_vec.end());
+
+            if (DEBUG)
+            {
+                std::cout << "Inserted Straggler (defining value=" << straggler_val << ", size=" << stragglerActualSize << "). Final Main: ";
+                printContainer(Main);
+            }
+        }
+        else if (DEBUG)
+        {
+            std::cout << "Straggler detected but size is 0." << std::endl;
+        }
+    }
+    else if (DEBUG)
+    {
+        std::cout << "No straggler inserted during this step." << std::endl;
+    }
+    if (stragglerFlag)
+        while (straggler < src.end())
+            Main.push_back(*straggler++);
+    src.assign(Main.begin(), Main.end());
+}
+
+// #################################
+// ###### GARBAGE STARTS HERE ######
+// #################################
+
+//     int pendAmount = Pend.size() / groupSize;
 
 //     if (pendAmount > 0)
 //     {
@@ -132,11 +330,11 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container src, int groupSize)
 
 //                 if (pendIndex < pendAmount && !pendAlreadyInserted[pendIndex])
 //                 {
-//                     auto &currElem = P[pendIndex];
+//                     auto &currElem = Pend[pendIndex];
 //                     auto &upperBoundVal = pairs[i - 1].second;
-//                     auto upperBoundIt = std::lower_bound(S.begin(), S.end(), upperBoundVal); // WHAT std::lower_bound(first, last, value)
-//                     auto insertPosIt = std::lower_bound(S.begin(), upperBoundIt, currElem);
-//                     S.insert(insertPosIt, currElem);
+//                     auto upperBoundIt = std::lower_bound(Main.begin(), Main.end(), upperBoundVal); // WHAT std::lower_bound(first, last, value)
+//                     auto insertPosIt = std::lower_bound(Main.begin(), upperBoundIt, currElem);
+//                     Main.insert(insertPosIt, currElem);
 //                     ++insertCount;
 //                     pendAlreadyInserted[pendIndex] = true;
 //                 }
@@ -153,15 +351,16 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container src, int groupSize)
 //             // SAME LOOP AS ABOVE, should only trigger in case of error. FAILSAFE. Make changes to both loops if necessary
 //             if (kJacob > pendAmount + 5)
 //             {
+//                 std::cout << "Error: FAILSAFE triggered" << std::endl;
 //                 for (int i = 0; i < pendAmount; ++i)
 //                 {
 //                     if (!pendAlreadyInserted[i])
 //                     {
-//                         auto &currElem = P[i];
+//                         auto &currElem = Pend[i];
 //                         auto &upperBoundVal = pairs[i + 1].first;
-//                         auto upperBoundIt = std::lower_bound(S.begin(), S.end(), upperBoundVal);
-//                         auto insertPosIt = std::lower_bound(S.begin(), upperBoundIt, currElem);
-//                         S.insert(insertPosIt, currElem);
+//                         auto upperBoundIt = std::lower_bound(Main.begin(), Main.end(), upperBoundVal);
+//                         auto insertPosIt = std::lower_bound(Main.begin(), upperBoundIt, currElem);
+//                         Main.insert(insertPosIt, currElem);
 //                         ++insertCount;
 //                         pendAlreadyInserted[i] = true;
 //                     }
@@ -172,10 +371,9 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container src, int groupSize)
 //     }
 //     if (stragglerFlag)
 //     {
-//         auto insertPosIt = std::lower_bound(S.begin(), S.end(), straggler);
-//         S.insert(insertPosIt, straggler);
+//         auto insertPosIt = std::lower_bound(Main.begin(), Main.end(), straggler);
+//         Main.insert(insertPosIt, straggler);
 //     }
 //     // Overwrite the original Container
-//     std::move(S.begin(), S.end(), begin);
+//     std::move(Main.begin(), Main.end(), begin);
 // }
-}

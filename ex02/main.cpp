@@ -103,15 +103,15 @@ int main(int ac, char **av)
     std::cout << "SORTED  : \n";
     misVec.printContainer(vec);
 
-    start_time = getUnixTime();
-    PmergeMeVec misDeq(deque);
-    misDeq.sort(deque);
-    stop_time = getUnixTime();
-    time_diff =  stop_time - start_time;
-    std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << "std::deque" << " : " << time_diff << "ms" << std::endl;
-    std::cout << "SORTED  : \n";
-    misDeq.printContainer(deque);
+    // start_time = getUnixTime();
+    // PmergeMeVec misDeq(deque);
+    // misDeq.sort(deque);
+    // stop_time = getUnixTime();
+    // time_diff =  stop_time - start_time;
+    // std::cout << "Time to process a range of " << ac - 1 << " elements with "
+    //           << "std::deque" << " : " << time_diff << "ms" << std::endl;
+    // std::cout << "SORTED  : \n";
+    // misDeq.printContainer(deque);
   }
   catch (const std::exception &e)
   {
@@ -119,3 +119,4 @@ int main(int ac, char **av)
   }
   return 0;
 }
+
