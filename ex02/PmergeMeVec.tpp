@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 20:25:11 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 20:41:07 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,8 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
 
                     int pendIndex = k - 1;
 
+                    if (pendIndex * groupSize >= static_cast<int>(Pend.size()))
+                        continue;
                     It b_k_start = Pend.begin();
                     std::advance(b_k_start, pendIndex * groupSize);
                     It b_k_end = std::next(b_k_start, groupSize);
@@ -204,7 +206,12 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
 
                     auto it_first_ge = std::upper_bound(temp_its.begin(), its_range_end, value_to_insert, [](const T &val, const It &it)
                                                         { return val < *it; });
-                    It insertPosIt = *it_first_ge;
+                    It insertPosIt;
+                    if (it_first_ge == temp_its.end())
+                        insertPosIt = Main.end();
+                    else
+                        insertPosIt = *it_first_ge;
+
                     size_t distance = std::distance(Main.begin(), insertPosIt);
                     size_t insert_idx = (distance / groupSize) * groupSize;
 
