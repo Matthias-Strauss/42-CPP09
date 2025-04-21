@@ -1,77 +1,82 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PmergeMeVec.cpp                                    :+:      :+:    :+:   */
+/*   PmergeMeVec.tpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 04:48:35 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 10:40:06 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #include "PmergeMeVec.hpp"
 
 /// @brief compairs the int values
 /// @param a first int
 /// @param b second int
 /// @return true if FIRST > SECOND (->implying a swap is neccessary)
-bool PmergeMeVec::_compPair(int &a, int &b)
+template <typename Container, typename T>
+bool PmergeMeVec<Container, T>::_compare(T &a, T &b)
 {
     _compCount++;
     return (a > b);
 }
 
-void PmergeMeVec::_swapPair(int &a, int &b)
-{
-    std::swap(a, b);
-
-    // OLD
-    // std::vector<int>::iterator tmp = a;
-    // a = b;
-    // b = tmp;
-}
-
-void PmergeMeVec::_swapPairs(std::vec<int> &a, std::vec<int> &b)
+template <typename Container, typename T>
+void PmergeMeVec<Container, T>::_swap(T &a, T &b)
 {
     std::swap(a, b);
 }
 
-void PmergeMeVec::sort(std::vector<int> &vec)
+template <typename Container, typename T>
+void PmergeMeVec<Container, T>::sort(Container &src)
 {
-    if (vec.size() < 2)
+    if (src.size() < 2)
         return;
 
-    _fordJohnson(vec.begin(), vec.end());
+    _fordJohnson(src.begin(), src.end());
 }
 
-void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int>::iterator end)
+template <typename Container, typename T>
+void PmergeMeVec<Container, T>::_fordJohnson(typename Container::iterator begin, typename Container::iterator end, int groupSize)
 {
-    std::vector<int>::size_type elemCount = std::distance(begin, end);
+    typedef typename Container::iterator It;
+
+    int elemCount = std::distance(begin, end);
 
     if (elemCount < 2)
         return;
 
-    std::vector<int>::size_type pairCount = elemCount / 2;
+    int pairCount = elemCount / 2;
     bool stragglerFlag = (elemCount % 2 != 0);
 
-    std::vector<std::pair<int, int>> pairs;
-    std::vector<int>::iterator it = begin;
-
+    Container pairs;
+    It it = std::next(begin, groupSize - 1);
+    It it2 = std::next(begin, 2 * groupSize - 1);Í
     pairs.reserve(pairCount);
 
-    // iterate through new vector of pairs and fill pairs with values
-    for (std::size_t i = 0; i < pairCount; i++)
+    for (int i = 0; i < pairCount; ++i)
     {
-        pairs.push_back(std::make_pair(*it, *(it + 1))); // create pair and add values
-        it += 2;
+        if (_compare(*it, *(it + 1)))
+            _swap(*it +, p.second);
     }
+    // // iterate through new container of pairs and fill pairs with elements
+    // for (int i = 0; i < pairCount; i++)
+    // {
+    //     pairs.push_back(*it);
+    // }
 
-    // iterate through vector of pairs, compare , and swap if necessary
+    // #####################################
+    // ### AT RECURSION: take groupSize * 2
+    // #####################################
+
+    // iterate through pairs and swap if neccessary
     for (auto &p : pairs)
     {
-        if (PmergeMeVec::_compPair(p.first, p.second))
-            _swapPair(p.first, p.second);
+        if (PmergeMeVec::_compare(p.first, p.second))
+            _swap(p.first, p.second);
     }
 
     // handle straggler:
@@ -82,8 +87,8 @@ void PmergeMeVec::_fordJohnson(std::vector<int>::iterator begin, std::vector<int
     // sort pairs
     for (std::size_t i = 0; i < (pairCount / 2); ++i)
     {
-        if (_compPair(pairs[i].second, pairs[i + 1].second)) // CONTINUE HERE -> LOOP STOPS WAY TOO EARLY
-            _swapPairs(pairs[i], pairs[i + 1]);              // fix types
+        if (_compare(pairs[i].second, pairs[i + 1].second)) // CONTINUE HERE -> LOOP STOPS WAY TOO EARLY
+            _swap(pairs[i], pairs[i + 1]);                  // fix types
         i += 2;
     }
 

@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 06:11:56 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 08:17:38 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 08:28:48 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,34 +78,43 @@ void safeSwapRange(Container &src, It first, It last, It dest)
 //     printVec(&vec);
 // }
 
-int main()
+size_t comparisonCount = 0;
+template <typename Container>
+void fJSort(Container &src)
 {
-    std::vector<int> vec = {25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    size_t comparisonCount = 0;
-    size_t numCount = vec.size();
-    size_t groupSize = 1;
+    size_t numberOfInts = src.size();
+    bool straggler = src.size() % 2;
+    size_t recursion = 0;
+
     size_t i;
     size_t j;
 
-    while (groupSize <= numCount / 2)
+    while (groupSize <= num / 2)
     {
         for (i = 0; i < numCount; i += groupSize)
         {
-            printVec(&vec);
+            printVec(&src);
             {
                 j = i + groupSize;
                 if (j >= numCount)
                     continue;
                 ++comparisonCount;
-                if (vec.at(i) > vec.at(i + groupSize))
+                if (src.at(i) > src.at(i + groupSize))
                 {
-                    safeSwapRange(vec, vec.begin() + i, vec.begin() + i + groupSize, vec.begin() + i + groupSize + 1);
+                    safeSwapRange(src, src.begin() + i, src.begin() + i + groupSize, src.begin() + i + groupSize + 1);
                 }
             }
         }
         groupSize *= 2;
     }
 }
+
+int main()
+{
+    std::vector<int> vec = {25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+    fJSort(vec);
+}
+
 // ####################################################
 /* i want to:
 
@@ -130,3 +139,36 @@ compare 4,8 12,16 20,24.......
 //         break;
 //     }
 // }
+
+// BACKUP
+/*
+template <typename Container>
+void fJSort(container<int> &src)
+{
+
+    size_t comparisonCount = 0;
+    size_t numCount = src.size();
+    size_t groupSize = 1;
+    size_t i;
+    size_t j;
+
+    while (groupSize <= numCount / 2)
+    {
+        for (i = 0; i < numCount; i += groupSize)
+        {
+            printVec(&src);
+            {
+                j = i + groupSize;
+                if (j >= numCount)
+                    continue;
+                ++comparisonCount;
+                if (src.at(i) > src.at(i + groupSize))
+                {
+                    safeSwapRange(src, src.begin() + i, src.begin() + i + groupSize, src.begin() + i + groupSize + 1);
+                }
+            }
+        }
+        groupSize *= 2;
+    }
+}
+    */

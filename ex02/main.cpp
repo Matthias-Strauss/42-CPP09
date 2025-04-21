@@ -17,6 +17,24 @@
 #include <iostream>
 #include <vector>
 
+void printVec(std::vector<int> &vec)
+{
+  std::cout << "[ ";
+
+  for (auto elem : vec)
+    std::cout << elem << " ";
+  std::cout << "]" << std::endl;
+}
+
+void printDeque(std::deque<int> &deq)
+{
+  std::cout << "[ ";
+
+  for (auto elem : deq)
+    std::cout << elem << " ";
+  std::cout << "]" << std::endl;
+}
+
 double getUnixTime(void)
 {
   struct timespec tv;
@@ -27,7 +45,7 @@ double getUnixTime(void)
   return (tv.tv_sec + (tv.tv_nsec / 1000000.0)); // FIX AND USE SUITABLE UNITS!!!!
 }
 
-int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
+int parseNumbers(int ac, char **av, std::vector<int> &vec, std::deque<int> &deq)
 {
   std::vector<int> duplicateCheck;
 
@@ -57,8 +75,8 @@ int parseNumbers(int ac, char **av, std::vector<int> *vec, std::deque<int> *deq)
         }
       }
       duplicateCheck.push_back(intNum);
-      vec->push_back(intNum);
-      deq->push_back(intNum);
+      vec.push_back(intNum);
+      deq.push_back(intNum);
     }
   }
   catch (const std::exception &e)
@@ -83,7 +101,7 @@ int main(int ac, char **av)
 
   std::vector<int> vec;
   std::deque<int> deque;
-  if (parseNumbers(ac, av, &vec, &deque))
+  if (parseNumbers(ac, av, vec, deque))
     return 1;
 
   std::cout << "ORIGINAL: [ ";
@@ -94,7 +112,8 @@ int main(int ac, char **av)
   try
   {
     start_time = getUnixTime();
-    PmergeMeVec::sort(vec);
+    PmergeMeVec misVec(vec);
+    misVec.sort(vec);
     stop_time = getUnixTime();
     time_diff = stop_time - start_time;
     std::cout << "Time to process a range of " << ac - 1 << " elements with "
