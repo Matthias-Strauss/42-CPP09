@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 14:05:12 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/22 00:09:50 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/22 01:10:41 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,30 @@ private:
     void _printOut();
 
     std::map<std::string, double> _db;
+};
+
+class DbError : public std::exception
+{
+public:
+    DbError(const std::string &message) : _message(message) {}
+    virtual const char *what() const throw()
+    {
+        return _message.c_str();
+    }
+private:
+    std::string _message = "DB Error";
+};
+
+class InputError : public std::exception
+{
+public:
+    InputError(const std::string &message) : _message(message) {}
+    virtual const char *what() const throw()
+    {
+        return _message.c_str();
+    }
+private:
+    std::string _message = "Input Error";
 };
 
 #endif
