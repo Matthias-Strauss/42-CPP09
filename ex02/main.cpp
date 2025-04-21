@@ -12,21 +12,6 @@
 
 #include "PmergeMeVec.hpp"
 
-#include <ctime>
-#include <deque>
-#include <iostream>
-#include <vector>
-
-double getUnixTime(void)
-{
-  struct timespec tv;
-
-  if (clock_gettime(CLOCK_REALTIME, &tv) != 0)
-    return 0;
-
-  return (tv.tv_sec + (tv.tv_nsec / 1000000.0)); // FIX AND USE SUITABLE UNITS!!!!
-}
-
 int parseNumbers(int ac, char **av, std::vector<int> &vec, std::deque<int> &deq)
 {
   std::vector<int> duplicateCheck;
@@ -49,14 +34,17 @@ int parseNumbers(int ac, char **av, std::vector<int> &vec, std::deque<int> &deq)
                                     "range.\033[0m");
       }
       int intNum = static_cast<int>(num);
-      for (int duplicateCheckNum : duplicateCheck)
+      if (ALLOW_DUPS)
       {
-        if (duplicateCheckNum == intNum)
+        for (int duplicateCheckNum : duplicateCheck)
         {
-          throw std::invalid_argument("\033[31mError: Duplicate number found.\033[0m");
+          if (duplicateCheckNum == intNum)
+          {
+            throw std::invalid_argument("\033[31mError: Duplicate number found.\033[0m");
+          }
         }
+        duplicateCheck.push_back(intNum);
       }
-      duplicateCheck.push_back(intNum);
       vec.push_back(intNum);
       deq.push_back(intNum);
     }
@@ -77,41 +65,50 @@ int main(int ac, char **av)
     return 1;
   }
 
-  double start_time;
-  double stop_time;
-  double time_diff;
+  // Use chrono types for timing
+  std::chrono::high_resolution_clock::time_point start_time;
+  std::chrono::high_resolution_clock::time_point stop_time;
+  std::chrono::microseconds time_diff;
 
   std::vector<int> vec;
   std::deque<int> deque;
   if (parseNumbers(ac, av, vec, deque))
     return 1;
 
-  std::cout << "ORIGINAL: \n[ ";
+  std::cout << "Before: [ ";
   for (auto &elem : vec)
     std::cout << elem << " ";
   std::cout << "]" << std::endl;
 
   try
   {
-    start_time = getUnixTime();
+    start_time = std::chrono::high_resolution_clock::now();
     PmergeMeVec misVec(vec);
-    misVec.sort(vec);
-    stop_time = getUnixTime();
-    time_diff = stop_time - start_time;
-    std::cout << "Time to process a range of " << ac - 1 << " elements with "
-              << "std::vector" << " : " << time_diff << "ms" << std::endl;
-    std::cout << "SORTED  : \n";
+    misVec.fordJohnson(vec, 1);
+    stop_time = std::chrono::high_resolution_clock::now();
+    time_diff = std::chrono::duration_cast<std::chrono::microseconds>(stop_time - start_time);
+    std::cout << "Sorted: ";
     misVec.printContainer(vec);
-
-    // start_time = getUnixTime();
-    // PmergeMeVec misDeq(deque);
-    // misDeq.sort(deque);
-    // stop_time = getUnixTime();
-    // time_diff =  stop_time - start_time;
-    // std::cout << "Time to process a range of " << ac - 1 << " elements with "
-    //           << "std::deque" << " : " << time_diff << "ms" << std::endl;
-    // std::cout << "SORTED  : \n";
-    // misDeq.printContainer(deque);
+    std::cout << "Time to process a range of " << ac - 1 << " elements with "
+              << "std::vector" << " : " << time_diff.count() << " us" << std::endl;
+    start_time = std::chrono::high_resolution_clock::now();
+    PmergeMeVec misDeq(deque);
+    misDeq.fordJohnson(deque, 1);
+    stop_time = std::chrono::high_resolution_clock::now();
+    time_diff = std::chrono::duration_cast<std::chrono::microseconds>(stop_time - start_time);
+    std::cout << "Time to process a range of " << ac - 1 << " elements with "
+              << "std::deque" << " : " << time_diff.count() << " us" << std::endl;
+    if (SORTED)
+    {
+      if (std::is_sorted(vec.begin(), vec.end()))
+        std::cout << "std::vector successfully sorted!" << std::endl;
+      else
+        std::cout << "std::vector unsuccessfully sorted!" << std::endl;
+      if (std::is_sorted(deque.begin(), deque.end()))
+        std::cout << "std::deque successfully sorted!" << std::endl;
+      else
+        std::cout << "std::deque unsuccessfully sorted!" << std::endl;
+    }
   }
   catch (const std::exception &e)
   {
@@ -119,4 +116,3 @@ int main(int ac, char **av)
   }
   return 0;
 }
-

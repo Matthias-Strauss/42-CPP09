@@ -6,11 +6,10 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 18:32:40 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/21 20:41:07 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:26:07 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 #include "PmergeMeVec.hpp"
 
 template <typename Container, typename T, typename It>
@@ -22,6 +21,9 @@ void PmergeMeVec<Container, T, It>::_fill(Container &Main, It &it, int groupSize
         it++;
     }
 }
+
+template <typename Container, typename T, typename It>
+unsigned int PmergeMeVec<Container, T, It>::getCount(){return _compCount;};
 
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::printContainer(Container &src)
@@ -46,20 +48,25 @@ bool PmergeMeVec<Container, T, It>::_compare(T &a, T &b)
 template <typename Container, typename T, typename It>
 void PmergeMeVec<Container, T, It>::_swap(It &a, It &b, int groupSize)
 {
-    std::swap_ranges(a - groupSize + 1, a + 1, b - groupSize + 1);
+
+    It first1 = std::prev(a, groupSize - 1);
+    It first2 = std::prev(b, groupSize - 1);
+    It last1 = std::next(a);
+
+    std::swap_ranges(first1, last1, first2);
 }
 
-template <typename Container, typename T, typename It>
-void PmergeMeVec<Container, T, It>::sort(Container &src)
-{
-    if (src.size() < 2)
-        return;
-    _compCount = 0;
-    _fordJohnson(src);
-}
+// template <typename Container, typename T, typename It>
+// void PmergeMeVec<Container, T, It>::sort(Container &src)
+// {
+//     if (src.size() < 2)
+//         return;
+//     _compCount = 0;
+//     _fordJohnson(src);
+// }
 
 template <typename Container, typename T, typename It>
-void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
+void PmergeMeVec<Container, T, It>::fordJohnson(Container &src, int groupSize)
 {
     // ######################## MEERRGGEEE ##################################
     It begin = src.begin();
@@ -85,23 +92,24 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
         it = std::next(it, 2 * groupSize);
         it2 = std::next(it2, 2 * groupSize);
     }
-    printContainer(src);
-    _fordJohnson(src, groupSize * 2); // RECURSION :O
+    // printContainer(src); //DEBUG
+    PmergeMeVec<Container, T, It>::fordJohnson(src, groupSize * 2); // RECURSION :O
 
     // ##################### BUILD MAIN AND PEND ##############################
 
     // BUILDING MAIN CHAIN (Main)
     Container Main{};
-    Main.reserve(elemCount);
+    // Main.reserve(elemCount);
     Container Pend{};
-    Pend.reserve(elemCount);
+    // Pend.reserve(elemCount);
 
     it = src.begin();
     it2 = std::next(begin, groupSize * 2); // CHECK VALUE OF *2!!!!
     end = src.end();
 
+    if(DEBUG){
     std::cout << "\nsrc: " << std::endl;
-    printContainer(src);
+    printContainer(src);}
     // Iterate through the pairs to build the main chain Main from the larger elements
     // Main.reserve(elemCount); should be handled by constructor
     if (pairCount > 0)
@@ -186,7 +194,7 @@ void PmergeMeVec<Container, T, It>::_fordJohnson(Container &src, int groupSize)
                     std::advance(b_k_start, pendIndex * groupSize);
                     It b_k_end = std::next(b_k_start, groupSize);
 
-                    std::vector<T> current_b_group_vec(b_k_start, b_k_end);
+                    Container current_b_group_vec(b_k_start, b_k_end);
                     T &value_to_insert = current_b_group_vec.back();
 
                     size_t current_main_size = Main.size();
