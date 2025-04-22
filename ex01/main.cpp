@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 01:04:43 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/22 02:59:54 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/22 03:20:43 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int main(int ac, char** av)
         {
             if (token.length() == 1 && std::isdigit(token[0]))
                 stack.push(static_cast<double>(token[0] - '0'));
+            else if (token.length() == 2 && token[0] == '-' && std::isdigit(token[1]) && token[1] != '0')
+                stack.push(static_cast<double>(-(token[1] - '0')));
             else if (isOp(token))
             {
                 if (stack.size() < 2)
