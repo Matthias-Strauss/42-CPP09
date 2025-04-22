@@ -6,7 +6,7 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 01:04:43 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/22 01:30:55 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/22 02:01:20 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 /*
 REMINDERS:
-handle operations with these tokens: "+ - / *".
+- handle operations with these tokens: "+ - / * 0 1 2 3 4 5 6 7 8 9".
+- numbers received will only be digits (0-9).
+- store in doubles anyway to be safe.
 */
 
 int main(int ac, char** av)
@@ -28,7 +30,7 @@ int main(int ac, char** av)
     try
     {
         RNP rnp(av[1]);
-        rnp._processRNP(av[1]);
+        rnp.processRNP(static_cast<std::string>av[1]);
         std::cout << "RNP: " << rnp.top() << std::endl;
     }
     catch (const RNPError &e)
