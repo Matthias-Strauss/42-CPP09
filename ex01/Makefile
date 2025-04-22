@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mstrauss <mstrauss@student.42.fr>          +#+  +:+       +#+         #
+#    By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 16:23:56 by mstrauss          #+#    #+#              #
-#    Updated: 2025/04/13 14:01:14 by mstrauss         ###   ########.fr        #
+#    Updated: 2025/04/22 02:36:03 by mstrauss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = rpn
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++17
-SRCS = main.cpp
+SRCS = main.cpp RPN.cpp
 INC = RPN.hpp
 OBJS = $(SRCS:.cpp=.o)
 

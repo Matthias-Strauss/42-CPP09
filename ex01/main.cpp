@@ -6,58 +6,73 @@
 /*   By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 01:04:43 by mstrauss          #+#    #+#             */
-/*   Updated: 2025/04/22 02:01:20 by mstrauss         ###   ########.fr       */
+/*   Updated: 2025/04/22 02:59:54 by mstrauss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RNP.hpp"
+#include "RPN.hpp"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <cstdlib> 
+#include <cctype>
 
-/*
-REMINDERS:
-- handle operations with these tokens: "+ - / * 0 1 2 3 4 5 6 7 8 9".
-- numbers received will only be digits (0-9).
-- store in doubles anyway to be safe.
-*/
+bool isOp(const std::string &token) {
+    return (token == "+" || token == "-" || token == "*" || token == "/");
+}
+
+double execOp(double a, double b, const std::string &op) {
+    if (op == "*") return a * b;
+    if (op == "-") return a - b;
+    if (op == "+") return a + b;
+    if (op == "/") {
+        if (b == 0) throw RPNError("Division by zero");
+        return a / b;
+    }
+    throw RPNError("Invalid operator '" + op + "'");
+}
 
 int main(int ac, char** av)
 {
     if (ac != 2)
     {
-        std::cerr << "Usage: ./rnp \"reverse polish notation, eg.   8 9 \"" << std::endl;
+        std::cerr << "Usage: ./RPN \"<reverse polish notation expression>\"" << std::endl;
         return 1;
     }
 
+    RPN stack;
+    std::string expression = av[1];
+    std::istringstream iss(expression);
+    std::string token;
+
     try
     {
-        RNP rnp(av[1]);
-        rnp.processRNP(static_cast<std::string>av[1]);
-        std::cout << "RNP: " << rnp.top() << std::endl;
-    }
-    catch (const RNPError &e)
-    {
-        std::cerr << e.what() << std::endl;
-        return 1;
+        while (iss >> token)
+        {
+            if (token.length() == 1 && std::isdigit(token[0]))
+                stack.push(static_cast<double>(token[0] - '0'));
+            else if (isOp(token))
+            {
+                if (stack.size() < 2)
+                    throw RPNError("Insufficient operands for operator '" + token + "'");
+                double operand2 = stack.top(); stack.pop();
+                double operand1 = stack.top(); stack.pop();
+                double result = execOp(operand1, operand2, token);
+                stack.push(result);
+            }
+            else
+                throw RPNInvalidInput("Invalid token encountered: '" + token + "'");
+        }
+        if (stack.size() != 1)
+            throw RPNError("Invalid expression format (stack size is not 1 at the end)");
+        std::cout << stack.top() << std::endl;
+
     }
     catch (const std::exception &e)
     {
         std::cerr << e.what() << std::endl;
         return 1;
     }
+
     return 0;
 }
-
-/*
-1. While there are tokens to be read : 
-2. Read a token 
-3. If it's a number add it to queue 
-4. If it's an operator 
-5. While there's an operator on the top of the stack with greater precedence: 
-6. Pop operators from the stack onto the output queue 
-7. Push the current operator onto the stack 
-8. If it's a left bracket push it onto the stack 
-9. If it's a right bracket 
-10. While there's not a left bracket at the top of the stack:
-11. Pop operators from the stack onto the output queue.
-12. Pop the left bracket from the stack and discard it 
-13. While there are operators on the stack, pop them to the queue
-*/
