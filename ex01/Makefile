@@ -6,13 +6,13 @@
 #    By: mstrauss <mstrauss@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 16:23:56 by mstrauss          #+#    #+#              #
-#    Updated: 2025/04/22 02:36:03 by mstrauss         ###   ########.fr        #
+#    Updated: 2025/04/22 03:56:51 by mstrauss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = rpn
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++17
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 SRCS = main.cpp RPN.cpp
 INC = RPN.hpp
 OBJS = $(SRCS:.cpp=.o)
